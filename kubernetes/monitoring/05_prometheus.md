@@ -23,12 +23,65 @@ cd kube-prometheus
 ls manifests -l
 ls manifests/setup -l
 ```
+# ./manifests/grafana-networkPolicy.yaml, ./manifests/alertmanager-networkPolicy.yaml, 
+# ./manifests/prometheus-networkPolicy.yaml 파일에 NetworkPolicy 추가
+```
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: grafana-allow-external
+  namespace: monitoring
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: grafana
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/part-of: kube-prometheus
+  ingress:
+  - ports:
+    - port: 3000
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: alertmanager-allow-external
+  namespace: monitoring
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: alert-router
+      app.kubernetes.io/name: alertmanager
+      app.kubernetes.io/part-of: kube-prometheus
+  ingress:
+  - ports:
+    - port: 9093
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: prometheus-allow-external
+  namespace: monitoring
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/component: prometheus
+      app.kubernetes.io/instance: k8s
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/part-of: kube-prometheus
+  ingress:
+  - ports:
+    - port: 9090
+```
 
 # 설치
 
 ```
-kubectl create -f ./manifests/setup/
-kubectl create -f ./manifests/
+kubectl apply --server-side -f manifests/setup
+kubectl wait \
+	--for condition=Established \
+	--all CustomResourceDefinition \
+	--namespace=monitoring
+kubectl apply -f manifests/
 ```
 
 # pod 확인
