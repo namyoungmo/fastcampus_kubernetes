@@ -23,8 +23,8 @@ cd kube-prometheus
 ls manifests -l
 ls manifests/setup -l
 ```
-# ./manifests/grafana-networkPolicy.yaml, ./manifests/alertmanager-networkPolicy.yaml, 
-# ./manifests/prometheus-networkPolicy.yaml 파일에 NetworkPolicy 추가
+# NetworkPolicy 추가
+./manifests/grafana-networkPolicy.yaml, ./manifests/alertmanager-networkPolicy.yaml, ./manifests/prometheus-networkPolicy.yaml 파일에 NetworkPolicy 추가
 ```
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
